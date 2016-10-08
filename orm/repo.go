@@ -144,7 +144,7 @@ func (r *Repo) Count() (count int, err error) {
 }
 
 // Insert 保存一条数据，返回lastid
-func (r *Repo) Insert(attrs G) (int64, error) {
+func (r *Repo) Insert(attrs G) (sql.Result, error) {
 	ln := len(attrs)
 	keys := make([]string, 0, ln)
 	qms := make([]string, 0, ln)
@@ -162,12 +162,7 @@ func (r *Repo) Insert(attrs G) (int64, error) {
 		strings.Join(qms, ","),
 	)
 
-	ret, err := r.exec(s, vals...)
-	if err != nil {
-		return 0, err
-	}
-
-	return ret.LastInsertId()
+	return r.exec(s, vals...)
 }
 
 // Delete 根据where条件做删除，返回被影响的行数
