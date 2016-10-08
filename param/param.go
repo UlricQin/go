@@ -1,7 +1,6 @@
 package param
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -154,4 +153,6 @@ func MustBool(r *http.Request, key string) bool {
 	} else {
 		errors.Bomb("bad request")
 	}
+
+	return false
 }

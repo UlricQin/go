@@ -2,6 +2,7 @@ package param
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/ulricqin/go/errors"
@@ -12,7 +13,17 @@ func ParseJSON(r *http.Request, v interface{}) {
 		errors.Bomb("content is blank")
 	}
 
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(v)
-	errors.Dangerous(err)
+	if r.Body == nil {
+		errors.Bomb("body is nil")
+	}
+
+	bs, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		errors.Bomb("cannot read body")
+	}
+
+	err = json.Unmarshal(bs, v)
+	if err != nil {
+		errors.Bomb("cannot decode body: %s", err.Error())
+	}
 }
