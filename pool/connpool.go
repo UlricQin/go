@@ -63,6 +63,7 @@ func (cp *ConnPool) Clean() {
 			conn.Close()
 		}
 	}
+	cp.active = 0
 	cp.conns = nil
 	cp.Unlock()
 }
@@ -70,10 +71,7 @@ func (cp *ConnPool) Clean() {
 // Put recycle the connection
 func (cp *ConnPool) Put(conn io.Closer) {
 	if cp.overIdle() {
-		cp.dec()
-		if conn != nil {
-			conn.Close()
-		}
+		cp.Close(conn)
 	} else {
 		cp.Lock()
 		cp.free = append(cp.free, conn)
